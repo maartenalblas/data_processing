@@ -50,7 +50,7 @@ def split_string(source, separators):
     # if the last char is no separator
     word = source[start_index:len(source)]
     if word != "":
-        out.append(word)
+        split_list.append(word)
 
     return split_list
 
