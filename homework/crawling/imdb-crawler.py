@@ -221,7 +221,7 @@ def scrape_top_250(url):
     index_dom = DOM(index_html)
 
     # loops over every movie
-    for td in index_dom.by_tag("td.titleColumn")[:1]:
+    for td in index_dom.by_tag("td.titleColumn")[:250]:
         # extracts the url of the movie
         for a in td.by_tag("a")[:1]:
             a = str(a)
@@ -252,33 +252,65 @@ def scrape_movie_page(dom):
     # YOUR SCRAPING CODE GOES HERE:
 
     # extract title
+    title = ""
     for h1 in dom.by_tag("h1.header"):
         for span in h1.by_tag("span.itemprop"):
             title = span.content
 
     # extract duration
+    duration = ""
     for time in dom.by_attribute(itemprop="duration"):
         duration = time.content
 
     # extract genres
     genres = ""
+    genres_empty = True
     for div in dom.by_attribute(itemprop = "genre"):
         for a in div.by_tag("a"):
+            if genres_empty != True:
+                genres += ";"
             genres += a.content
-            genres += ";"
+            genres_empty = False
 
     # exract directors
     directors = ""
+    directors_empty = True
     for div in dom.by_attribute(itemprop = "director"):
-        for a in div.by_tag("a"):
-            directors += a.content
-            directors += ";"
-    print directors
+        for span in div.by_tag("span"):
+            if directors_empty != True:
+                directors += ";"
+            directors += span.content
+            directors_empty = False
 
+    # exract writers
+    writers = ""
+    writers_empty = True
+    for div in dom.by_attribute(itemprop = "creator"):
+        for span in div.by_tag("span.itemprop"):
+            if writers_empty != True:
+                writers += ";"
+            writers += span.content
+            writers_empty = False
 
+    # exract actors
+    actors = ""
+    actors_empty = True
+    for div in dom.by_attribute(itemprop = "actor"):
+        for span in div.by_tag("span.itemprop"):
+            if actors_empty != True:
+                actors += ";"
+            actors += span.content
+            actors_empty = False
 
+    # extract rating
+    rating = ""
+    for span in dom.by_attribute(itemprop="ratingValue"):
+        rating = span.content
 
-
+    # extract number of ratings
+    n_ratings = ""
+    for span in dom.by_attribute(itemprop="ratingCount"):
+        n_ratings = span.content
 
     # Return everything of interest for this movie (all strings as specified
     # in the docstring of this function).
