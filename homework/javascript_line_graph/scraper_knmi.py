@@ -1,7 +1,8 @@
 import csv
+import json
 
 # open csv file and reads into csv-file
-f = open('KNMI_20151113.txt')
+f = open('KNMI_20150101.txt', 'rb')
 csv_file = csv.reader(f)
 
 # apends every row into list data
@@ -25,10 +26,5 @@ for row in body:
     temp_date.append(temp)
     temp_dates.append(temp_date)
 
-print temp_dates
-
-output = open('date_temp.csv', 'wb')
-writer = csv.writer(output)
-writer.writerow(['Date', 'Temp'])
-for temp_date in temp_dates:
-    writer.writerow(temp_date)
+f = open('KNMI_json.txt', 'w')
+json = json.dump(temp_dates, f)
