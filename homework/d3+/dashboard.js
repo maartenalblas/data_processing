@@ -277,9 +277,9 @@ d3.csv("hpi_data.csv", function(error, data) {
   lenCountries = pre_countries.length
 
 
-  // match rankof country in countries with names in
-  // country_codes and determine id of country
-  // also constructs new lists for other data because id's are not complete
+  // match countries with country_ids
+  // also new list for all other variables
+  // because not all countries and ids are match
   country_ids = []
   ranks = []
   indexes = []
@@ -299,42 +299,88 @@ d3.csv("hpi_data.csv", function(error, data) {
     }
   }
 
-  //determine scale and color countries
-  // a is an associative array
+  // color the countries according to index
   var dictionary = {}
   for (var i = 0; i < lenCountries; i++){
-      if (indexes[i] < 25){
-          fillKey = 'class1'
+      if (indexes[i] < 30){
+          fillKey = 'Argghh'
           dictionary[country_ids[i]] = {fillKey};
       }
-      else if (indexes[i] >= 25 && indexes[i] < 30){
-          dictionary[country_ids[i]] = {fillKey : 'class2', rank : ranks[i]};
+      else if (indexes[i] >= 30 && indexes[i] < 40){
+          dictionary[country_ids[i]] = {fillKey : 'Angry'};
       }
-      else if (indexes[i] >= 30 && indexes[i] < 35){
-          dictionary[country_ids[i]] = {fillKey : 'class3', rank: ranks[i]};
+      else if (indexes[i] >= 40 && indexes[i] < 50){
+          dictionary[country_ids[i]] = {fillKey : 'Mwahh'};
       }
-      else if (indexes[i] >= 35 && indexes[i] < 40){
-          dictionary[country_ids[i]] = {fillKey : 'class4', rank: ranks[i]};
+      else if (indexes[i] >= 50 && indexes[i] < 60){
+          dictionary[country_ids[i]] = {fillKey : 'Happy'};
       }
-      else if (indexes[i] >= 40){
-          dictionary[country_ids[i]] = {fillKey : 'class5', rank: ranks[i]};
+      else if (indexes[i] >= 60){
+          dictionary[country_ids[i]] = {fillKey : 'Yeaahh'};
       }
   }
+
+  remove_old_bars = function() {
+    // select all barscharts
+    d3.select(".chart")
+        .remove()
+  }
+
+  visualize_bars = function(geo_id) {
+    // places the expectation, well_being and foot_print of clicked country i data
+    for (var i = 0, n = country_ids.length; i < n; i++) {
+      if (geo_id == country_ids[i]) {
+
+        data = [null, null, expectations[i], well_beings[i], foot_prints[i]]
+      }
+    }
+
+    // adds barchart to body with class chart
+    d3.select("body").append("div")
+      .attr("class", "chart")
+      .style("width", "1000px")
+      .style("height", "200px")
+
+    // creates barcharts
+    d3.select(".chart")
+    .selectAll("div")
+      .data(data)
+    .enter().append("div")
+      .style("width", function(d) { return d * 10 + "px"; })
+      .style("background-color", "steelblue")
+      .style("font", "16px sans-serif")
+      .style("text-align", "right")
+      .style("padding", "10px")
+      .style("margin", "5px")
+      .style("color", "white")
+      .text(function(d) { return d; });
+    }
+
   // make the map
   var map = new Datamap({
       element: document.getElementById('container'),
       // colorscale countries
       fills: {
-          'class1': 'blue',
-          'class2': 'red',
-          'class3': 'green',
-          'class4': 'yellow',
-          'class5': 'purple',
+          'Argghh': '#d7191c',
+          'Angry': '#fdae61',
+          'Mwahh': '#ffffbf',
+          'Happy': '#abdda4',
+          'Yeaahh': '#2b83ba',
           defaultFill: 'grey'
       }
-      ,
-
       // add associative array dictionary
-      data : dictionary
+      ,
+      data : dictionary,
+
+      // displays data when country is clicked
+      done: function (map) {
+            map.svg.selectAll('.datamaps-subunit').on('click', function(geography) {
+              geo_id = geography.id
+              remove_old_bars()
+              visualize_bars(geo_id)
+            })
+        }
   })
+  map.legend()
+
 });
